@@ -1,39 +1,999 @@
+<!-- 1. Prosty formularz wprowadzenia danych użytkownika -->
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Strona</title>
+    <title>Formularz danych użytkownika</title>
 </head>
 <body>
-    <script>
-        const header = document.createElement('header');
-        const h1 = document.createElement('h1');
-        h1.textContent = 'NOWA STRONA';
-        header.appendChild(h1);
-        document.body.appendChild(header);
-
-        const main = document.createElement('main');
-        
-        const paragraph1 = document.createElement('p');
-        paragraph1.textContent = 'Strona zrobiona w JS';
-
-        const paragraph2 = document.createElement('p');
-        paragraph2.textContent = 'To jest wpis';
-
-        const paragraph3 = document.createElement('p');
-        paragraph3.textContent = 'To jest kolejna linia';
-
-        main.appendChild(paragraph1);
-        main.appendChild(paragraph2);
-        main.appendChild(paragraph3);
-        document.body.appendChild(main);
-
-        const footer = document.createElement('footer');
-        const h3 = document.createElement('h3');
-        h3.textContent = 'STOPKA';
-        footer.appendChild(h3);
-        document.body.appendChild(footer);
-    </script>
+    <form action="indIG.php" method="post">
+        Imię: <input type="text" name="first_name"><br>
+        Nazwisko: <input type="text" name="last_name"><br>
+        <input type="submit" value="Zapisz">
+    </form>
 </body>
 </html>
+
+<?php
+// insert_user.php
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "my_database";
+
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Sprawdzenie, czy formularz został przesłany
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Sprawdzenie, czy klucze istnieją
+    if (isset($_POST['first_name']) && isset($_POST['last_name'])) {
+        $first_name = $_POST['first_name'];
+        $last_name = $_POST['last_name'];
+
+        $sql = "INSERT INTO users (first_name, last_name) VALUES ('$first_name', '$last_name')";
+            }
+        }
+
+$conn->close();
+?>
+
+<!-- 2. Formularz rejestracyjny -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Rejestracja</title>
+</head>
+<body>
+    <form action="indIG.php" method="post">
+        Imię: <input type="text" name="first_name"><br>
+        Nazwisko: <input type="text" name="last_name"><br>
+        E-mail: <input type="email" name="email"><br>
+        Hasło: <input type="password" name="password"><br>
+        <input type="submit" value="Zarejestruj">
+    </form>
+</body>
+</html>
+
+<?php
+// register.php
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "my_database";
+
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (isset($_POST['first_name']) && isset($_POST['last_name']) && isset($_POST['email'])) {
+        $first_name = $_POST['first_name'];
+        $last_name = $_POST['last_name'];
+        $email = $_POST['email'];
+
+        $checkEmailQuery = "SELECT * FROM users WHERE email='$email'";
+        $result = $conn->query($checkEmailQuery);
+
+        if ($result->num_rows > 0) {
+            echo "E-mail już istnieje. Proszę użyć innego.";
+        } else {
+            $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+            $sql = "INSERT INTO users (first_name, last_name, email, password) VALUES ('$first_name', '$last_name', '$email', '$password')";
+            
+            if ($conn->query($sql) === TRUE) {
+                echo "Rejestracja powiodła się.";
+            } else {
+                echo "Błąd: " . $conn->error;
+            }
+        }
+    } else {
+        echo "Proszę wypełnić wszystkie wymagane pola.";
+    }
+}
+$conn->close();
+?>
+
+<!-- 3. Formularz logowania -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Logowanie</title>
+</head>
+<body>
+    <form action="indIG.php" method="post">
+        E-mail: <input type="email" name="email"><br>
+        Hasło: <input type="password" name="password"><br>
+        <input type="submit" value="Zaloguj">
+    </form>
+</body>
+</html>
+
+<?php
+// login.php
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "my_database";
+
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (isset($_POST['email']) && isset($_POST['password'])) {
+        $email = $_POST['email'];
+        $password = $_POST['password'];
+
+$sql = "SELECT * FROM users WHERE email = '$email'";
+$result = $conn->query($sql);
+
+if ($result->num_rows > 0) {
+    $row = $result->fetch_assoc();
+    if (password_verify($password, $row['password'])) {
+        echo "Zalogowano pomyślnie.";
+    } else {
+        echo "Nieprawidłowe hasło.";
+    }
+} else {
+    echo "Nie znaleziono użytkownika o podanym adresie e-mail.";
+}
+}
+}
+
+$conn->close();
+?>
+
+<!-- 4. Edycja danych użytkownika -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edycja danych użytkownika</title>
+</head>
+<body>
+    <form action="indIG.php" method="post">
+        ID użytkownika: <input type="text" name="user_id"><br>
+        Nowe imię: <input type="text" name="first_name"><br>
+        Nowe nazwisko: <input type="text" name="last_name"><br>
+        Nowy e-mail: <input type="email" name="email"><br>
+        <input type="submit" value="Aktualizuj">
+    </form>
+</body>
+</html>
+
+<?php
+// update_user.php
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "my_database";
+
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (isset($_POST['user_id']) && isset($_POST['first_name']) && isset($_POST['last_name']) && isset($_POST['email'])) {
+$user_id = $_POST['user_id'];
+$first_name = $_POST['first_name'];
+$last_name = $_POST['last_name'];
+$email = $_POST['email'];
+
+$sql = "UPDATE users SET first_name='$first_name', last_name='$last_name', email='$email' WHERE id='$user_id'";
+
+if ($conn->query($sql) === TRUE) {
+    echo "Dane użytkownika zostały zaktualizowane.";
+} else {
+    echo "Błąd: " . $sql . "<br>" . $conn->error;
+}
+    }
+}
+$conn->close();
+?>
+
+<!-- 5. Formularz dodawania komentarza -->
+// Zadanie 5: Formularz dodawania komentarza
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dodawanie komentarza</title>
+</head>
+<body>
+    <form action="indIG.php" method="post">
+        Komentarz: <textarea name="comment"></textarea><br>
+        <input type="submit" value="Dodaj komentarz">
+    </form>
+    
+    <?php
+    $conn = new mysqli("localhost", "root", "", "my_database");
+    $sql = "SELECT * FROM comments";
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+        while($row = $result->fetch_assoc()) {
+            echo "<p>" . $row['comment'] . "</p>";
+        }
+    }
+    ?>
+</body>
+</html>
+
+<?php
+// add_comment.php
+$conn = new mysqli("localhost", "root", "", "my_database");
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (isset($_POST['comment'])) {
+$comment = $_POST['comment'];
+
+$sql = "INSERT INTO comments (comment) VALUES ('$comment')";
+
+if ($conn->query($sql) === TRUE) {
+    echo "Komentarz został dodany.";
+} else {
+    echo "Błąd: " . $sql . "<br>" . $conn->error;
+}
+    }
+}
+$conn->close();
+?>
+
+<!-- 6. Formularz wyszukiwania danych -->
+// Zadanie 6: Formularz wyszukiwania danych
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Wyszukiwanie danych</title>
+</head>
+<body>
+    <form action="indIG.php" method="post">
+        Słowo kluczowe: <input type="text" name="keyword"><br>
+        <input type="submit" value="Szukaj">
+    </form>
+    
+    <?php
+    if (isset($_POST['keyword'])) {
+        $conn = new mysqli("localhost", "root", "", "my_database");
+        $keyword = $_POST['keyword'];
+        $sql = "SELECT * FROM users WHERE first_name LIKE '%$keyword%' OR last_name LIKE '%$keyword%'";
+        $result = $conn->query($sql);
+
+        if ($result->num_rows > 0) {
+            while($row = $result->fetch_assoc()) {
+                echo "<p>" . $row['first_name'] . " " . $row['last_name'] . "</p>";
+            }
+        } else {
+            echo "Brak wyników.";
+        }
+    }
+    ?>
+</body>
+</html>
+
+<!-- 7. Wyświetlanie danych użytkowników z bazy -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lista użytkowników</title>
+</head>
+<body>
+    <?php
+    $conn = new mysqli("localhost", "root", "", "my_database");
+    $sql = "SELECT * FROM users";
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+        echo "<table border='1'><tr><th>Imię</th><th>Nazwisko</th><th>E-mail</th></tr>";
+        while($row = $result->fetch_assoc()) {
+            echo "<tr><td>" . $row['first_name'] . "</td><td>" . $row['last_name'] . "</td><td>" . $row['email'] . "</td></tr>";
+        }
+        echo "</table>";
+    } else {
+        echo "Brak użytkowników.";
+    }
+    ?>
+</body>
+</html>
+
+<!-- 8. Usuwanie użytkowników z bazy danych -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Usuń użytkownika</title>
+</head>
+<body>
+    <form action="indIG.php" method="post">
+        ID użytkownika: <input type="text" name="user_id"><br>
+        <input type="submit" value="Usuń">
+    </form>
+</body>
+</html>
+
+<?php
+// delete_user.php
+$conn = new mysqli("localhost", "root", "", "my_database");
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (isset($_POST['first_name']) && isset($_POST['last_name']) && isset($_POST['email'])) {
+$user_id = $_POST['user_id'];
+
+$sql = "DELETE FROM users WHERE id='$user_id'";
+
+if ($conn->query($sql) === TRUE) {
+    echo "Użytkownik został usunięty.";
+} else {
+    echo "Błąd: " . $sql . "<br>" . $conn->error;
+}
+    }
+}
+$conn->close();
+?>
+
+<!-- 9. Formularz kontaktowy z zapisem do bazy -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Formularz kontaktowy</title>
+</head>
+<body>
+    <form action="indIG.php" method="post">
+        Imię: <input type="text" name="first_name"><br>
+        E-mail: <input type="email" name="email"><br>
+        Wiadomość: <textarea name="message"></textarea><br>
+        <input type="submit" value="Wyślij">
+    </form>
+</body>
+</html>
+
+<?php
+// contact.php
+$conn = new mysqli("localhost", "root", "", "my_database");
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (isset($_POST['first_name']) && isset($_POST['message']) && isset($_POST['email'])) {
+$first_name = $_POST['first_name'];
+$email = $_POST['email'];
+$message = $_POST['message'];
+
+$sql = "INSERT INTO contacts (first_name, email, message) VALUES ('$first_name', '$email', '$message')";
+
+if ($conn->query($sql) === TRUE) {
+    echo "Wiadomość została wysłana.";
+} else {
+    echo "Błąd: " . $sql . "<br>" . $conn->error;
+}
+    }
+}
+$conn->close();
+?>
+
+<!-- 10. Formularz do przesyłania plików -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Przesyłanie plików</title>
+</head>
+<body>
+    <form action="indIG.php" method="post" enctype="multipart/form-data">
+        Wybierz plik do przesłania: <input type="file" name="file"><br>
+        <input type="submit" value="Prześlij plik">
+    </form>
+</body>
+</html>
+
+<!-- 11. System oceniania (recenzji) -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ocena produktu</title>
+</head>
+<body>
+    <form action="indIG.php" method="post">
+        Produkt: <input type="text" name="product_name"><br>
+        Ocena (1-5): <input type="number" name="rating" min="1" max="5"><br>
+        Recenzja: <textarea name="review"></textarea><br>
+        <input type="submit" value="Oceń">
+    </form>
+    
+    <?php
+    $conn = new mysqli("localhost", "root", "", "my_database");
+    $sql = "SELECT * FROM reviews";
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+        while($row = $result->fetch_assoc()) {
+            echo "<p>Produkt: " . $row['product_name'] . " - Ocena: " . $row['rating'] . "<br>Recenzja: " . $row['review'] . "</p>";
+        }
+    }
+    ?>
+</body>
+</html>
+
+<?php
+// rate_product.php
+$conn = new mysqli("localhost", "root", "", "my_database");
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (isset($_POST['product_name']) && isset($_POST['rating']) && isset($_POST['review'])) {
+$product_name = $_POST['product_name'];
+$rating = $_POST['rating'];
+$review = $_POST['review'];
+
+$sql = "INSERT INTO reviews (product_name, rating, review) VALUES ('$product_name', '$rating', '$review')";
+
+if ($conn->query($sql) === TRUE) {
+    echo "Dziękujemy za ocenę!";
+} else {
+    echo "Błąd: " . $sql . "<br>" . $conn->error;
+}
+    }
+}
+$conn->close();
+?>
+
+<!-- 12. Formularz subskrypcji newslettera -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Subskrypcja newslettera</title>
+</head>
+<body>
+    <form action="indIG.php" method="post">
+        E-mail: <input type="email" name="email"><br>
+        <input type="submit" value="Zapisz się">
+    </form>
+</body>
+</html>
+
+<!-- 13. Formularz filtrowania danych z bazy -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Filtrowanie danych</title>
+</head>
+<body>
+    <form action="indIG.php" method="post">
+        Wiek: <input type="number" name="age"><br>
+        Lokalizacja: <input type="text" name="location"><br>
+        <input type="submit" value="Filtruj">
+    </form>
+    
+    <?php
+    if (isset($_POST['age']) || isset($_POST['location'])) {
+        $conn = new mysqli("localhost", "root", "", "my_database");
+        $age = $_POST['age'];
+        $location = $_POST['location'];
+        $sql = "SELECT * FROM users WHERE age='$age' OR location='$location'";
+        $result = $conn->query($sql);
+
+        if ($result->num_rows > 0) {
+            while($row = $result->fetch_assoc()) {
+                echo "<p>" . $row['first_name'] . " " . $row['last_name'] . " - Wiek: " . $row['age'] . " - Lokalizacja: " . $row['location'] . "</p>";
+            }
+        } else {
+            echo "Brak wyników.";
+        }
+    }
+    ?>
+</body>
+</html>
+
+<!-- 14. Formularz do zarządzania produktami -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Zarządzanie produktami</title>
+</head>
+<body>
+    <form action="indIG.php" method="post">
+        Nazwa produktu: <input type="text" name="product_name"><br>
+        Cena: <input type="number" name="price"><br>
+        <input type="submit" name="add" value="Dodaj produkt">
+        <input type="submit" name="delete" value="Usuń produkt">
+    </form>
+</body>
+</html>
+
+<?php
+// manage_products.php
+$conn = new mysqli("localhost", "root", "", "my_database");
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+if (isset($_POST['add'])) {
+    $product_name = $_POST['product_name'];
+    $price = $_POST['price'];
+    $sql = "INSERT INTO products (product_name, price) VALUES ('$product_name', '$price')";
+    
+    if ($conn->query($sql) === TRUE) {
+        echo "Produkt został dodany.";
+    } else {
+        echo "Błąd: " . $sql . "<br>" . $conn->error;
+    }
+} elseif (isset($_POST['delete'])) {
+    $product_name = $_POST['product_name'];
+    $sql = "DELETE FROM products WHERE product_name='$product_name'";
+    
+    if ($conn->query($sql) === TRUE) {
+        echo "Produkt został usunięty.";
+    } else {
+        echo "Błąd: " . $sql . "<br>" . $conn->error;
+    }
+}
+
+$conn->close();
+?>
+
+<!-- 15. Formularz zmiany hasła -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Zmiana hasła</title>
+</head>
+<body>
+    <form action="indIG.php" method="post">
+        Stare hasło: <input type="password" name="old_password"><br>
+        Nowe hasło: <input type="password" name="new_password"><br>
+        <input type="submit" value="Zmień hasło">
+    </form>
+</body>
+</html>
+
+<?php
+// change_password.php
+$conn = new mysqli("localhost", "root", "", "my_database");
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (isset($_POST['old_password']) && isset($_POST['new_password'])) {
+$old_password = $_POST['old_password'];
+$new_password = password_hash($_POST['new_password'], PASSWORD_DEFAULT);
+$email = "user@example.com";
+
+$sql = "SELECT password FROM users WHERE email='$email'";
+$result = $conn->query($sql);
+$row = $result->fetch_assoc();
+
+if (password_verify($old_password, $row['password'])) {
+    $sql = "UPDATE users SET password='$new_password' WHERE email='$email'";
+    
+    if ($conn->query($sql) === TRUE) {
+        echo "Hasło zostało zmienione.";
+    } else {
+        echo "Błąd: " . $conn->error;
+    }
+} else {
+    echo "Stare hasło jest nieprawidłowe.";
+}
+    }
+}
+$conn->close();
+?>
+
+<!-- 16. Paginacja danych w tabeli -->
+<?php
+$conn = new mysqli("localhost", "root", "", "my_database");
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+$limit = 10;
+if (isset($_GET['page'])) {
+    $page = $_GET['page'];
+} else {
+    $page = 1;
+}
+$start = ($page - 1) * $limit;
+
+$sql = "SELECT * FROM users LIMIT $start, $limit";
+$result = $conn->query($sql);
+
+echo "<table border='1'>";
+while ($row = $result->fetch_assoc()) {
+    echo "<tr><td>" . $row['first_name'] . "</td><td>" . $row['last_name'] . "</td></tr>";
+}
+echo "</table>";
+
+$sql = "SELECT COUNT(id) FROM users";
+$result = $conn->query($sql);
+$row = $result->fetch_row();
+$total_records = $row[0];
+$total_pages = ceil($total_records / $limit);
+
+for ($i=1; $i<=$total_pages; $i++) {
+    echo "<a href='pagination.php?page=" . $i . "'>" . $i . "</a> ";
+}
+
+$conn->close();
+?>
+
+<!-- 17. Formularz do wpisywania adresu użytkownika -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Adres użytkownika</title>
+</head>
+<body>
+    <form action="indIG.php" method="post">
+        Miasto: <input type="text" name="city"><br>
+        Ulica: <input type="text" name="street"><br>
+        Kod pocztowy: <input type="text" name="postal_code"><br>
+        <input type="submit" value="Zapisz adres">
+    </form>
+</body>
+</html>
+
+<?php
+// address.php
+$conn = new mysqli("localhost", "root", "", "my_database");
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (isset($_POST['city']) && isset($_POST['street']) && isset($_POST['postal_code'])) {
+$city = $_POST['city'];
+$street = $_POST['street'];
+$postal_code = $_POST['postal_code'];
+
+$sql = "INSERT INTO addresses (city, street, postal_code) VALUES ('$city', '$street', '$postal_code')";
+
+if ($conn->query($sql) === TRUE) {
+    echo "Adres został zapisany.";
+} else {
+    echo "Błąd: " . $sql . "<br>" . $conn->error;
+}
+    }
+}
+$conn->close();
+?>
+
+<!-- 18. Dynamiczny formularz dodawania wielu produktów -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dodawanie wielu produktów</title>
+</head>
+<body>
+    <form action="indIG.php" method="post">
+        <fieldset>
+            <legend>Produkt 1</legend>
+            Nazwa produktu: <input type="text" name="products[]"><br>
+            Cena: <input type="number" name="prices[]"><br>
+        </fieldset>
+        
+        <fieldset>
+            <legend>Produkt 2</legend>
+            Nazwa produktu: <input type="text" name="products[]"><br>
+            Cena: <input type="number" name="prices[]"><br>
+        </fieldset>
+        
+        <fieldset>
+            <legend>Produkt 3</legend>
+            Nazwa produktu: <input type="text" name="products[]"><br>
+            Cena: <input type="number" name="prices[]"><br>
+        </fieldset>
+
+        <!-- Możesz dodać więcej takich bloków według potrzeb -->
+
+        <input type="submit" value="Zapisz produkty">
+    </form>
+</body>
+</html>
+
+<?php
+// add_multiple_products.php
+$conn = new mysqli("localhost", "root", "", "my_database");
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+if (isset($_POST['products'])) {
+    foreach ($_POST['products'] as $index => $product) {
+        $price = $_POST['prices'][$index];
+        if (!empty($product) && !empty($price)) {
+            $sql = "INSERT INTO products (product_name, price) VALUES ('$product', '$price')";
+            if ($conn->query($sql) === TRUE) {
+                echo "Produkt został dodany: $product za $price<br>";
+            } else {
+                echo "Błąd: " . $conn->error;
+            }
+        }
+    }
+}
+
+$conn->close();
+?>
+
+
+<!-- 19. Rejestracja z walidacją e-mail -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Rejestracja z walidacją e-mail</title>
+</head>
+<body>
+    <form action="indIG.php" method="post">
+        Imię: <input type="text" name="first_name"><br>
+        Nazwisko: <input type="text" name="last_name"><br>
+        E-mail: <input type="email" name="email"><br>
+        Hasło: <input type="password" name="password"><br>
+        <input type="submit" value="Zarejestruj">
+    </form>
+</body>
+</html>
+
+<?php
+// email_validation_register.php
+$conn = new mysqli("localhost", "root", "", "my_database");
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (isset($_POST['email'])) {
+$email = $_POST['email'];
+
+if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    $first_name = $_POST['first_name'];
+    $last_name = $_POST['last_name'];
+    $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+
+    $sql = "INSERT INTO users (first_name, last_name, email, password) VALUES ('$first_name', '$last_name', '$email', '$password')";
+
+    if ($conn->query($sql) === TRUE) {
+        echo "Rejestracja zakończona sukcesem.";
+    } else {
+        echo "Błąd: " . $sql . "<br>" . $conn->error;
+    }
+} else {
+    echo "Nieprawidłowy adres e-mail.";
+}
+    }
+}
+$conn->close();
+?>
+
+<!-- 20. Formularz do aktualizacji statusu zamówienia -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Aktualizacja statusu zamówienia</title>
+</head>
+<body>
+    <form action="indIG.php" method="post">
+        ID zamówienia: <input type="text" name="order_id"><br>
+        Status: 
+        <select name="status">
+            <option value="w trakcie realizacji">W trakcie realizacji</option>
+            <option value="wysłane">Wysłane</option>
+            <option value="zrealizowane">Zrealizowane</option>
+        </select><br>
+        <input type="submit" value="Aktualizuj status">
+    </form>
+</body>
+</html>
+
+<?php
+// update_order_status.php
+$conn = new mysqli("localhost", "root", "", "my_database");
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (isset($_POST['order_id']) && isset($_POST['status'])) {
+$order_id = $_POST['order_id'];
+$status = $_POST['status'];
+
+$sql = "UPDATE orders SET status='$status' WHERE id='$order_id'";
+
+if ($conn->query($sql) === TRUE) {
+    echo "Status zamówienia został zaktualizowany.";
+} else {
+    echo "Błąd: " . $sql . "<br>" . $conn->error;
+}
+    }
+}
+$conn->close();
+?>
+
+<!-- 21. Formularz rezerwacji -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Rezerwacja</title>
+</head>
+<body>
+    <form action="indIG.php" method="post">
+        Data: <input type="date" name="date"><br>
+        Godzina: <input type="time" name="time"><br>
+        Liczba osób: <input type="number" name="people_count"><br>
+        <input type="submit" value="Zarezerwuj">
+    </form>
+</body>
+</html>
+
+<?php
+// reservation.php
+$conn = new mysqli("localhost", "root", "", "my_database");
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (isset($_POST['date']) && isset($_POST['time']) && isset($_POST['people_count'])) {
+$date = $_POST['date'];
+$time = $_POST['time'];
+$people_count = $_POST['people_count'];
+
+$sql = "INSERT INTO reservations (date, time, people_count) VALUES ('$date', '$time', '$people_count')";
+
+if ($conn->query($sql) === TRUE) {
+    echo "Rezerwacja została dokonana.";
+} else {
+    echo "Błąd: " . $conn->error;
+}
+    }
+}
+$conn->close();
+?>
+
+<!-- 22. Formularz oceny kursu -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ocena kursu</title>
+</head>
+<body>
+    <form action="indIG.php" method="post">
+        Kurs: <input type="text" name="course_name"><br>
+        Ocena (1-10): <input type="number" name="rating" min="1" max="10"><br>
+        <input type="submit" value="Oceń kurs">
+    </form>
+    
+    <?php
+    $conn = new mysqli("localhost", "root", "", "my_database");
+    $sql = "SELECT course_name, AVG(rating) as avg_rating FROM course_reviews GROUP BY course_name";
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+        while($row = $result->fetch_assoc()) {
+            echo "<p>Kurs: " . $row['course_name'] . " - Średnia ocena: " . $row['avg_rating'] . "</p>";
+        }
+    }
+    ?>
+</body>
+</html>
+
+<?php
+// rate_course.php
+$conn = new mysqli("localhost", "root", "", "my_database");
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (isset($_POST['course_name']) && isset($_POST['rating'])) {
+$course_name = $_POST['course_name'];
+$rating = $_POST['rating'];
+
+$sql = "INSERT INTO course_reviews (course_name, rating) VALUES ('$course_name', '$rating')";
+
+if ($conn->query($sql) === TRUE) {
+    echo "Ocena została dodana.";
+} else {
+    echo "Błąd: " . $conn->error;
+}
+    }
+}
+$conn->close();
+?>
+
+<!-- 23. Formularz do ankiety -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ankieta</title>
+</head>
+<body>
+    <form action="indIG.php" method="post">
+        Pytanie 1: <input type="radio" name="question1" value="Tak"> Tak
+                   <input type="radio" name="question1" value="Nie"> Nie<br>
+        Pytanie 2: <input type="radio" name="question2" value="Opcja 1"> Opcja 1
+                   <input type="radio" name="question2" value="Opcja 2"> Opcja 2<br>
+        <input type="submit" value="Prześlij ankietę">
+    </form>
+</body>
+</html>
+
+<?php
+// survey.php
+$conn = new mysqli("localhost", "root", "", "my_database");
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (isset($_POST['question1']) && isset($_POST['question2'])) {
+$question1 = $_POST['question1'];
+$question2 = $_POST['question2'];
+
+$sql = "INSERT INTO survey_responses (question1, question2) VALUES ('$question1', '$question2')";
+
+if ($conn->query($sql) === TRUE) {
+    echo "Ankieta została zapisana.";
+} else {
+    echo "Błąd: " . $sql . "<br>" . $conn->error;
+}
+    }
+}
+$conn->close();
+?>
+
+<!-- 24. Formularz do zapisu na wydarzenie -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Zapis na wydarzenie</title>
+</head>
+<body>
+    <form action="indIG.php" method="post">
+        Imię: <input type="text" name="first_name"><br>
+        Nazwisko: <input type="text" name="last_name"><br>
+        <input type="submit" value="Zapisz się">
+    </form>
+</body>
+</html>
+
+<?php
+// event_registration.php
+$conn = new mysqli("localhost", "root", "", "my_database");
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+$sql = "SELECT COUNT(id) as count FROM event_registrations";
+$result = $conn->query($sql);
+$row = $result->fetch_assoc();
+$max_capacity = 100;
+
+if ($row['count'] < $max_capacity) {
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        if (isset($_POST['first_name']) && isset($_POST['last_name'])) {
+    $first_name = $_POST['first_name'];
+    $last_name = $_POST['last_name'];
+    $sql = "INSERT INTO event_registrations (first_name, last_name) VALUES ('$first_name', '$last_name')";
+
+    if ($conn->query($sql) === TRUE) {
+        echo "Zostałeś zapisany na wydarzenie.";
+    } else {
+        echo "Błąd: " . $conn->error;
+    }
+} else {
+    echo "Brak wolnych miejsc na wydarzenie.";
+}
+    }
+}
+$conn->close();
+?>
