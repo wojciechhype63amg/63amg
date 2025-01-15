@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Strona</title>
+</head>
+<body>
+    <script>
+        const header = document.createElement('header');
+        const h1 = document.createElement('h1');
+        h1.textContent = 'NOWA STRONA';
+        header.appendChild(h1);
+        document.body.appendChild(header);
+
+        const main = document.createElement('main');
+        
+        const paragraph1 = document.createElement('p');
+        paragraph1.textContent = 'Strona zrobiona w JS';
+
+        const paragraph2 = document.createElement('p');
+        paragraph2.textContent = 'To jest wpis';
+
+        const paragraph3 = document.createElement('p');
+        paragraph3.textContent = 'To jest kolejna linia';
+
+        main.appendChild(paragraph1);
+        main.appendChild(paragraph2);
+        main.appendChild(paragraph3);
+        document.body.appendChild(main);
+
+        const footer = document.createElement('footer');
+        const h3 = document.createElement('h3');
+        h3.textContent = 'STOPKA';
+        footer.appendChild(h3);
+        document.body.appendChild(footer);
+    </script>
+</body>
+</html>
