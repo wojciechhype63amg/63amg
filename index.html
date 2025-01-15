@@ -3,91 +3,152 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Moja Strona</title>
+    <title>Fancy Strona</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        /* Resetowanie stylów */
+        * {
             margin: 0;
             padding: 0;
-            background-color: #f4f4f9;
+            box-sizing: border-box;
+        }
+ 
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(to bottom, #6c63ff, #f4f4f9);
             color: #333;
+            overflow-x: hidden;
         }
  
         header {
-            background-color: #6c63ff;
+            background: linear-gradient(135deg, #6c63ff, #4845d6);
             color: white;
-            padding: 20px 0;
+            padding: 50px 20px;
             text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
  
         header h1 {
-            margin: 0;
-            font-size: 2.5rem;
+            font-size: 3rem;
+            margin-bottom: 10px;
+            animation: fadeInDown 1s ease-out;
         }
  
         header p {
-            margin: 0;
             font-size: 1.2rem;
+            animation: fadeInDown 1.2s ease-out;
         }
  
         section {
-            padding: 20px;
+            padding: 50px 20px;
             text-align: center;
         }
  
         section h2 {
+            font-size: 2.5rem;
             color: #6c63ff;
-            font-size: 2rem;
-            margin-bottom: 10px;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
         }
  
         section p {
-            font-size: 1rem;
-            line-height: 1.6;
-            margin-bottom: 20px;
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            color: #555;
         }
  
         .btn {
             display: inline-block;
-            background-color: #6c63ff;
+            background: linear-gradient(90deg, #6c63ff, #5750d9);
             color: white;
             text-decoration: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            font-size: 1rem;
-            transition: background-color 0.3s;
+            padding: 15px 30px;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            transition: transform 0.3s, background-color 0.3s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
  
         .btn:hover {
-            background-color: #5750d9;
+            transform: translateY(-5px);
+            background: linear-gradient(90deg, #5750d9, #6c63ff);
+        }
+ 
+        .features {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 40px;
+        }
+ 
+        .feature {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+ 
+        .feature:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+ 
+        .feature img {
+            width: 60px;
+            margin-bottom: 15px;
         }
  
         footer {
-            background-color: #333;
+            background: #333;
             color: white;
+            padding: 20px 10px;
             text-align: center;
-            padding: 10px 0;
-            margin-top: 20px;
+        }
+ 
+        footer p {
+            font-size: 0.9rem;
+        }
+ 
+        /* Animacje */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
     </style>
 </head>
 <body>
     <header>
-        <h1>Witaj na Mojej Stronie!</h1>
-        <p>Twój przewodnik po prostocie i pięknie</p>
+        <h1>Fancy Strona</h1>
+        <p>Odkryj piękno animacji i nowoczesnego designu</p>
     </header>
  
     <section>
-        <h2>O nas</h2>
-        <p>To jest przykład prostej strony internetowej stworzonej w HTML i CSS. Możesz ją dostosować do swoich potrzeb, zmieniając kolory, treści i układ.</p>
+        <h2>Co oferujemy?</h2>
+        <p>Zaprojektowaliśmy tę stronę, abyś mógł zobaczyć, jak estetyczne elementy i animacje mogą przyciągnąć uwagę.</p>
+        <div class="features">
+            <div class="feature">
+https://via.placeholder.com/60" alt="Ikona 2">
+                <h3>Estetyka</h3>
+                <p>Tworzymy nowoczesne i piękne projekty.</p>
+            </div>
+            <div class="feature">
+<img src="https://via.placeholder.com/60" alt="Ikona 3">
+                <h3>Funkcjonalność</h3>
+                <p>Każdy element jest stworzony z myślą o użytkowniku.</p>
+            </div>
+        </div>
         <a href="#kontakt" class="btn">Skontaktuj się z nami</a>
     </section>
-     <section>
-        <h2>123</h2>
-        <p>narwik top1 szkola we wszechswiecie!!!!!!!!!!!!!!</p>
-    </section>
+ 
     <footer>
-        <p>&copy; 2025 Wojciech Sobczak&Krystian Majewski. Wszelkie prawa zastrzeżone.</p>
+        <p>&copy; 2025 Fancy Strona Wojtek SObczak &Krystian Majewski. Wszelkie prawa zastrzeżone.</p>
     </footer>
 </body>
 </html>
